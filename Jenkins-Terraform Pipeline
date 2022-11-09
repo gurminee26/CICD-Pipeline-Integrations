@@ -20,10 +20,21 @@ pipeline {
                 sh 'terraform init'
             }
         }
+        stage('Terraform Validate') {
+            steps {
+                sh 'terraform validate'
+            }
+        }
         stage('Terraform Plan') {
             steps {
                 
                 sh 'terraform plan'
+            }
+        }
+         stage('Manual Approval') {
+            steps {
+                
+                input 'Deploy the infrastructure?'
             }
         }
         stage('Terraform Apply') {
@@ -35,3 +46,4 @@ pipeline {
         
     }
 }
+
