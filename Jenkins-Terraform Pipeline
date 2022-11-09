@@ -1,49 +1,50 @@
 pipeline {
     agent any
-    
     tools {
         terraform 'Terraform'
     }
-
     stages {
-        stage('Git Checkout') {
+        stage('Git checkout') {
             steps {
                 echo 'Cloning the project codebase....'
                 git branch: 'main', url: 'https://github.com/gurminee26/airbnb-infrastructure-v1.git'
-                sh 'pwd'
-                sh 'ls'
+                // sh 'pwd'
+                // sh 'ls'
             }
         }
-        stage('Terraform Init') {
+        stage('Terraform init') {
             steps {
-                echo 'Terraform Init....'
+                echo 'Terraform init....'
                 sh 'terraform init'
             }
         }
-        stage('Terraform Validate') {
+        stage('Terraform validate') {
             steps {
                 sh 'terraform validate'
             }
         }
-        stage('Terraform Plan') {
+         stage('Terraform plan') {
             steps {
-                
                 sh 'terraform plan'
             }
         }
-         stage('Manual Approval') {
+         stage('Checkov scan') {
             steps {
-                
-                input 'Deploy the infrastructure?'
+                sh '''
+                sudo pip3 install checkov
+                checkov -d . --skip-check CKV_AWS_79,CKV2_AWS_41
+                '''
             }
         }
-        stage('Terraform Apply') {
-            
+        stage('Manual approval') {
             steps {
-                sh 'terraform apply --auto-approve'
+               input 'Deploy the infrastructure?'
             }
         }
-        
+        stage('Terraform destroy') {
+            steps {
+                sh 'terraform destroy --auto-approve'
+            }
+        }
     }
 }
-
