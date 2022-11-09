@@ -31,6 +31,20 @@ pipeline {
                 sh 'terraform plan'
             }
         }
+        
+        
+        stage('Checkov Scan') {
+            steps {
+                
+                sh '''
+                pip3 install checkov
+                checkov -d .
+
+                '''
+            }
+        }
+        
+        
          stage('Manual Approval') {
             steps {
                 
@@ -46,4 +60,3 @@ pipeline {
         
     }
 }
-
