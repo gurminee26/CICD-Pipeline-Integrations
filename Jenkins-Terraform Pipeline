@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    
+    tools {
+        terraform 'Terraform'
+    }
+
+    stages {
+        stage('Git Checkout') {
+            steps {
+                echo 'Cloning the project codebase....'
+                git branch: 'main', url: 'https://github.com/gurminee26/airbnb-infrastructure-v1.git'
+                sh 'pwd'
+                sh 'ls'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                echo 'Terraform Init....'
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                
+                sh 'terraform plan'
+            }
+        }
+        stage('Terraform Apply') {
+            
+            steps {
+                sh 'terraform apply --auto-approve'
+            }
+        }
+        
+    }
+}
